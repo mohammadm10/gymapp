@@ -1,41 +1,52 @@
 import json
 from django.http import HttpResponse
+from rest_framework import serializers
+from rest_framework.response import Response
+from rest_framework.views import APIView
 from pymongo import MongoClient
 from django.views.decorators.csrf import csrf_exempt
 
-
-# Assuming your MongoDB server is running on localhost:27017
+# MongoDB connection setup
 client = MongoClient('localhost', 27017)
-@csrf_exempt
 
-def signUp(request):
-    if request.method == 'POST':
-        try:
-            # Load data from frontend
-            data = json.loads(request.body.decode('utf-8'))
-            username = data.get('username')
-            firstName = data.get('firstName')
-            lastName = data.get('lastName')
-            password = data.get('password')
+# Serializer to validate and parse incoming data
+class UserSerializer(serializers.Serializer):
+    username = serializers.CharField(max_length=100)
+    firstName = serializers.CharField(max_length=100)
+    lastName = serializers.CharField(max_length=100)
+    email = serializers.CharField(max_length=100)
+    password = serializers.CharField(max_length=100)
 
-            # Print data for validation
-            print(f"Received username: {username}, firstName: {firstName}, lastName: {lastName} password: {password}")
+# API view for handling user sign-up
+class SignUpAPIView(APIView):
+    def post(self, request):
+        # Initialize the serializer with the incoming data
+        serializer = UserSerializer(data=request.data)
+        
+        # Check if the incoming data is valid
+        if serializer.is_valid():
+            # Extract validated data from the serializer
+            username = serializer.validated_data['username']
+            firstName = serializer.validated_data['firstName']
+            lastName = serializer.validated_data['lastName']
+            email = serializer.validated_data['email']
+            password = serializer.validated_data['password']
 
             # Connect to the MongoDB database and users collection
             db = client['GymAppDB']
             collection = db['Users']
 
-            # Insert the username and password into MongoDB
-            user_data = {"username": username, "firstName": firstName, "lastName": lastName, "password": password}
+            # Prepare the data to be inserted into MongoDB
+            user_data = {"username": username, "firstName": firstName, "lastName": lastName, "email": email, "password": password}
+            
+            # Insert the data into MongoDB
             result = collection.insert_one(user_data)
 
+            # Check if the insertion was successful
             if result.inserted_id:
-                return HttpResponse("Data received and inserted successfully", status=200)
+                return Response("Data received and inserted successfully", status=201)
             else:
-                return HttpResponse("Failed to insert data into MongoDB", status=500)
-
-        except json.JSONDecodeError as e:
-            print(f"Error decoding JSON: {e}")
-            return HttpResponse("Invalid JSON data", status=400)
-    else:
-        return HttpResponse("Invalid request method", status=405)
+                return Response("Failed to insert data into MongoDB", status=500)
+        else:
+            # Return validation errors if the incoming data is not valid
+            return Response(serializer.errors, status=400)

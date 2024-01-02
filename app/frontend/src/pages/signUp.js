@@ -18,6 +18,7 @@ export default function Home() {
 const [username, setUsername] = useState('');
 const [firstName, setfirstName] = useState('');
 const [lastName, setlastName] = useState('');
+const [email, setEmail] = useState('');
 const [password, setPassword] = useState('');
 const [confrimPassword, setConfirmPassword] = useState('');
 
@@ -27,12 +28,14 @@ const logIn = async () => {
       username,
       firstName,
       lastName,
+      email,
       password,
     });
     if (res.status === 200) {
-      console.log('Successfully sent username and password to backend');
+      console.log('Successfully sent user data to backend');
     } else {
-      console.log('Error logging in');
+        console.log(res);
+      console.log('Error signing up');
     }
   } catch (error) {
     console.log(error);
@@ -49,11 +52,12 @@ const logIn = async () => {
     <>
       <main id='home'>
         <section className='min-h-screen'>
-          <TextField id="firstName" label="firstName" variant="outlined" onChange={(e) => setfirstName(e.target.value)} />
-          <TextField id="lastName" label="lastName" variant="outlined" onChange={(e) => setlastName(e.target.value)} />
-          <TextField id="username" label="username" variant="outlined" onChange={(e) => setUsername(e.target.value)} />
+          <TextField id="firstName" label="FirstName" variant="outlined" onChange={(e) => setfirstName(e.target.value)} />
+          <TextField id="lastName" label="LastName" variant="outlined" onChange={(e) => setlastName(e.target.value)} />
+          <TextField id="username" label="Username" variant="outlined" onChange={(e) => setUsername(e.target.value)} />
+          <TextField id="email" label="Email" variant="outlined" onChange={(e) => setEmail(e.target.value)} />
           <TextField id="password" label="Password" variant="outlined" type="password" onChange={(e) => setPassword(e.target.value)} />
-          <TextField id="confrimPassword" label="Retype Password" variant="outlined" type="password" onChange={(e) => setConfirmPassword(e.target.value)} />
+          <TextField id="confrimPassword" label="Confirm Password" variant="outlined" type="password" onChange={(e) => setConfirmPassword(e.target.value)} />
           <Button onClick={logIn}
             style={{
               borderRadius: 5,
