@@ -1,38 +1,29 @@
 import { Button, TextField } from '@mui/material';
 import axios from 'axios';
 import { useState } from 'react';
+import shaHash from './utils/shaHash';
 
-// const fetchData = async () => {
-//   try {
-//     const response = await axios.get('http://127.0.0.1:8000/test/');
-//     return response.data;
-//   } catch (error) {
-//     console.error('Error fetching data:', error);
-//     throw error;
-//   }
-// };
-
-// export default fetchData;
 export default function Home() {
 
-const [username, setUserName] = useState('');
-const [password, setPassword] = useState('');
+  const [username, setUserName] = useState('');
+  const [password, setPassword] = useState('');
 
-const logIn = async () => {
-  try {
-    const res = await axios.post('http://127.0.0.1:8000/test/', {
-      username,
-      password,
-    });
-    if (res.status === 200) {
-      console.log('Successfully sent username and password to backend');
-    } else {
-      console.log('Error logging in');
+  const logIn = async () => {
+    const hashedPassword = shaHash(password); // Encode plaintext to sha-256 prior to sending to backend
+    try {
+      const res = await axios.post('http://127.0.0.1:8000/test/', {
+        username,
+        hashedPassword,
+      });
+      if (res.status === 200) {
+        console.log('Successfully sent username and password to backend');
+      } else {
+        console.log('Error logging in');
+      }
+    } catch (error) {
+      console.log(error);
     }
-  } catch (error) {
-    console.log(error);
   }
-}
 
 
   return (
