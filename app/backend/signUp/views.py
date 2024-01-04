@@ -5,6 +5,7 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 from pymongo import MongoClient
 from django.views.decorators.csrf import csrf_exempt
+import bcrypt
 
 # MongoDB connection setup
 client = MongoClient('localhost', 27017)
@@ -15,7 +16,6 @@ class UserSerializer(serializers.Serializer):
     firstName = serializers.CharField(max_length=100)
     lastName = serializers.CharField(max_length=100)
     email = serializers.CharField(max_length=100)
-    password = serializers.CharField(max_length=100)
 
 # API view for handling user sign-up
 class SignUpAPIView(APIView):
@@ -30,14 +30,16 @@ class SignUpAPIView(APIView):
             firstName = serializer.validated_data['firstName']
             lastName = serializer.validated_data['lastName']
             email = serializer.validated_data['email']
-            password = serializer.validated_data['password']
-
+            password = request.data['hashedPassword']
+            
+            salt = bcrypt.gensalt()
+            new_hashed_password = bcrypt.hashpw(password.encode('utf-8'), salt)
             # Connect to the MongoDB database and users collection
             db = client['GymAppDB']
             collection = db['Users']
 
             # Prepare the data to be inserted into MongoDB
-            user_data = {"username": username, "firstName": firstName, "lastName": lastName, "email": email, "password": password}
+            user_data = {"username": username, "firstName": firstName, "lastName": lastName, "email": email, "password": new_hashed_password}
             
             # Insert the data into MongoDB
             result = collection.insert_one(user_data)
