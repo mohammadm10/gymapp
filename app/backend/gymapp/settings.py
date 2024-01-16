@@ -43,6 +43,7 @@ INSTALLED_APPS = [
     "django.contrib.staticfiles",
     "myapp",
     "signUp",
+    "weight_tracker",
     "corsheaders"
 ]
 
