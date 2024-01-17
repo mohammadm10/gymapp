@@ -22,5 +22,6 @@ urlpatterns = [
     #path('hello/', hello_world, name='hello_world'),
     path("", include("myapp.urls")),
     path("", include("signUp.urls")),
-    path("", include("weight_tracker.urls"))
+    path("", include("weight_tracker.urls")),
+    path("", include("rep_max_calculator.urls")),
 ]
