@@ -44,6 +44,7 @@ INSTALLED_APPS = [
     "myapp",
     "signUp",
     "weight_tracker",
+    "rep_max_calculator",
     "corsheaders"
 ]
 
