@@ -46,7 +46,6 @@ INSTALLED_APPS = [
     "weight_tracker",
     "rep_max_calculator",
     "workout_creator",
-    "workout_plan",
     "corsheaders"
 ]
 
