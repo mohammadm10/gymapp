@@ -24,4 +24,5 @@ urlpatterns = [
     path("", include("signUp.urls")),
     path("", include("weight_tracker.urls")),
     path("", include("rep_max_calculator.urls")),
+    path("", include("workout_creator.urls")),
 ]
